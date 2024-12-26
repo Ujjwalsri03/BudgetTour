@@ -1,22 +1,28 @@
-import React, { useRef } from "react";
+import React, { useState } from "react";
 import "./search-bar.css";
 import { Col, Form, FormGroup } from "reactstrap";
-
 import { BASE_URL } from "./../../units/config";
 import { useNavigate } from "react-router-dom";
 
 const SearchBar = () => {
-  const locationRef = useRef("");
-  const distanceRef = useRef(0);
-  const maxGroupSizeRef = useRef(0);
+  const [formData, setFormData] = useState({
+    location: "",
+    distance: "",
+    maxGroupSize: "",
+  });
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
-  const searchHandler = async () => {
-    const location = locationRef.current.value;
-    const distance = distanceRef.current.value;
-    const maxGroupSize = maxGroupSizeRef.current.value;
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value })); // Update state
+  };
 
-    if (location === "" || distance === "" || maxGroupSize === "") {
+  const searchHandler = async (e) => {
+    e.preventDefault();
+    const { location, distance, maxGroupSize } = formData;
+
+    if (!location || !distance || !maxGroupSize) {
       return alert("All fields are required!");
     }
 
@@ -29,13 +35,9 @@ const SearchBar = () => {
         )}&maxGroupSize=${encodeURIComponent(maxGroupSize)}`
       );
 
-      if (!res.ok) {
-        throw new Error("Something went wrong");
-      }
+      if (!res.ok) throw new Error("Something went wrong");
 
       const result = await res.json();
-      console.log(result);
-
       navigate(
         `/tours/search?city=${encodeURIComponent(
           location
@@ -45,52 +47,72 @@ const SearchBar = () => {
         { state: result.data }
       );
     } catch (error) {
-      alert(error.message);
+      setErrorMessage(error.message);
     }
   };
 
   return (
-    <Col lg="12">
-      <div className="search__bar ">
-        <Form className="d-flex align-items-center gap-4">
+    <Col xs="12" sm="12" md="12" lg="12">
+      <div className="search__bar">
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
+        <Form onSubmit={searchHandler} className="d-flex align-items-center gap-4">
           <FormGroup className="d-flex gap-3 form__group form__group-fast">
             <span>
-              <i class="ri-map-pin-line"></i>
+              <i className="ri-map-pin-line"></i>
             </span>
             <div>
-              <h6>Location</h6>
+              <label htmlFor="location">
+                <h6>Location</h6>
+              </label>
               <input
                 type="text"
+                id="location"
+                name="location"
                 placeholder="Where are you going?"
-                ref={locationRef}
+                value={formData.location}
+                onChange={handleInputChange}
               />
             </div>
           </FormGroup>
           <FormGroup className="d-flex gap-3 form__group form__group-fast">
             <span>
-              <i class="ri-map-pin-time-line"></i>
+              <i className="ri-map-pin-time-line"></i>
             </span>
             <div>
-              <h6>Distance</h6>
+              <label htmlFor="distance">
+                <h6>Distance</h6>
+              </label>
               <input
                 type="number"
+                id="distance"
+                name="distance"
                 placeholder="Distance k/m"
-                ref={distanceRef}
+                value={formData.distance}
+                onChange={handleInputChange}
               />
             </div>
           </FormGroup>
           <FormGroup className="d-flex gap-3 form__group form__group-last">
             <span>
-              <i class="ri-group-line"></i>
+              <i className="ri-group-line"></i>
             </span>
             <div>
-              <h6>Max People</h6>
-              <input type="number" placeholder="0" ref={maxGroupSizeRef} />
+              <label htmlFor="maxGroupSize">
+                <h6>Max People</h6>
+              </label>
+              <input
+                type="number"
+                id="maxGroupSize"
+                name="maxGroupSize"
+                placeholder="0"
+                value={formData.maxGroupSize}
+                onChange={handleInputChange}
+              />
             </div>
           </FormGroup>
-          <span className="search__icon" type="submit" onClick={searchHandler}>
-            <i class="ri-search-line"></i>
-          </span>
+          <button className="search__icon" type="submit">
+            <i className="ri-search-line"></i>
+          </button>
         </Form>
       </div>
     </Col>

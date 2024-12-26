@@ -10,14 +10,14 @@ function Services() {
   return (
     <div className="services">
       <ul>
-        <Link to= "/stays" className="Link">
+        <a href= "https://www.momondo.in/stays" className="Link">
           <li>
             <div className="servies_card">
               <img src={img} alt="" />
               <p>Hotel / stays</p>
             </div>
           </li>
-        </Link>
+        </a>
 
         <Link to='/CarRent' className="Link">
           <li>
@@ -28,14 +28,14 @@ function Services() {
           </li>
         </Link>
 
-        <Link className="Link">
+        <a href="https://www.skyscanner.co.in" className="Link">
           <li>
             <div className="servies_card">
               <img src={img3} alt="" />
               <p>Flights</p>
             </div>
           </li>
-        </Link>
+        </a>
 
         <Link to= '/Ai' className="Link">
           <li>

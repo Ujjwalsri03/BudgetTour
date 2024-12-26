@@ -12,7 +12,7 @@ const AboutSection = ({ aboutClass }) => {
           ? { marginTop: "0px" }
           : { marginTop: "280px" }
       }
-    >
+    > 
       <Container>
         <Row>
           <Col lg="6" md="6">
